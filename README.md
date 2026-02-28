@@ -1,2 +1,5 @@
-# my-editor-configs
-These are you personal configs only for my use case, not meant for general use. 
+# My Editor Configs
+
+This repository contains my personal editor configurations. These are tailored to my specific workflow and are **not** intended for general use.
+
+Feel free to explore, but please note that these configurations may not work as intended outside of my environment.
