@@ -1,0 +1,319 @@
+# theme = "gruvbox"
+#
+# [editor]
+# # --- Visual Polish ---
+# line-number = "relative"
+# cursorline = true
+# color-modes = true
+# bufferline = "multiple"
+# idle-timeout = 50
+# default-line-ending = "lf"
+# auto-format = true
+# scrolloff = 8
+# rulers = [100]
+# mouse = true
+# middle-click-paste = true
+# true-color = true
+# gutters = ["diagnostics", "spacer", "line-numbers", "spacer", "diff"]
+#
+# # --- Smart Indentation ---
+# auto-pairs = true
+# # Note: 'auto-indent' is handled by Tree-sitter and is not a valid config key.
+# auto-completion = true
+# completion-trigger-len = 2
+# completion-replace = true
+#
+# # --- Search & Selection ---
+# search = { smart-case = true, wrap-around = true }
+# scroll-lines = 3
+#
+# # --- Advanced Features ---
+# soft-wrap.enable = true
+# text-width = 100
+#
+# [editor.cursor-shape]
+# insert = "bar"
+# normal = "block"
+# select = "underline"
+#
+# [editor.file-picker]
+# hidden = false
+# git-ignore = true
+# max-depth = 6
+#
+# [editor.auto-save]
+# focus-lost = true
+# after-delay.enable = true
+# after-delay.timeout = 3000
+#
+# [editor.statusline]
+# left = ["mode", "spacer", "spinner", "file-name", "read-only-indicator", "file-modification-indicator"]
+# center = ["version-control"]
+# right = ["diagnostics", "selections", "register", "position", "position-percentage", "total-line-numbers", "file-encoding", "file-type"]
+# separator = "│"
+# mode.normal = "NORMAL"
+# mode.insert = "INSERT"
+# mode.select = "SELECT"
+#
+# [editor.lsp]
+# display-messages = true
+# display-inlay-hints = true
+# snippets = true
+# auto-signature-help = true
+# display-signature-help-docs = true
+# goto-reference-include-declaration = true
+#
+# [editor.whitespace.render]
+# space = "none"
+# tab = "all"
+# newline = "none"
+#
+# [editor.whitespace.characters]
+# tab = "→"
+# tabpad = " "
+#
+# [editor.indent-guides]
+# render = true
+# character = "│"
+# skip-levels = 0
+#
+# [keys.normal]
+# # === File Operations ===
+# "C-s" = ":w"
+# "C-S" = ":wa"
+# "C-q" = ":q"
+# "C-Q" = ":qa"
+# "esc" = ["collapse_selection", "keep_primary_selection"]
+#
+# # === Buffer Management ===
+# "C-tab" = ":buffer-next"
+# "C-S-tab" = ":buffer-previous"
+# "L" = ":buffer-next"
+# "H" = ":buffer-previous"
+# "C-w" = ":buffer-close"
+# "A-w" = ":buffer-close-others"
+#
+# # === Window Splits ===
+# "C-h" = "jump_view_left"
+# "C-j" = "jump_view_down"
+# "C-k" = "jump_view_up"
+# "C-l" = "jump_view_right"
+# "C-\\" = "vsplit"
+# "C-S-\\" = "hsplit"
+#
+# # === File Picker & Search ===
+# "C-p" = "file_picker"
+# "C-f" = "global_search"
+# "C-g" = "search"
+#
+# # === LSP & Code Intelligence ===
+# "K" = "hover"
+# "C-space" = "completion"
+# "A-ret" = "code_action"  # FIXED: 'ret' is the correct key code
+#
+# # === Multiple Cursors & Selection ===
+# "C-d" = ["move_char_right", "move_prev_word_start", "move_next_word_end", "search_selection", "search_next", "extend_search_next"]
+# "A-j" = ["open_below", "normal_mode"]
+# "A-k" = ["open_above", "normal_mode"]
+#
+# # === Quick Actions ===
+# "C-/" = "toggle_comments"
+#
+# [keys.normal.g]
+# d = "goto_definition"
+# r = "goto_reference"
+# i = "goto_implementation"
+# t = "goto_type_definition"
+#
+# [keys.normal.space]
+# f = "file_picker"
+# g = "global_search"
+# d = "goto_definition"
+# r = "rename_symbol"
+# a = "code_action"
+# s = "symbol_picker"
+# w = ":w"
+# q = ":q"
+# "/" = "toggle_comments"
+#
+# [keys.insert]
+# # === Smart Editing ===
+# "C-space" = "completion"
+# "C-h" = "delete_char_backward"
+# "C-w" = "delete_word_backward"
+# "A-backspace" = "delete_word_backward"
+# "C-s" = "normal_mode"
+#
+# [keys.select]
+# "C-/" = "toggle_comments"
+# "A-j" = ["open_below", "normal_mode"]
+# "A-k" = ["open_above", "normal_mode"]
+
+
+theme = "jellybeans"
+
+[editor]
+# --- Visual Polish ---
+line-number = "relative"
+cursorline = true
+color-modes = true
+bufferline = "multiple"
+idle-timeout = 50
+default-line-ending = "lf"
+auto-format = true
+scrolloff = 8
+rulers = [100]
+mouse = true
+middle-click-paste = true
+true-color = true
+gutters = ["diagnostics", "spacer", "line-numbers", "spacer", "diff"]
+
+# --- Smart Indentation ---
+auto-pairs = true
+# Fixed: 'auto-indent' replaced with valid field
+indent-heuristic = "hybrid"
+auto-completion = true
+completion-trigger-len = 2
+completion-replace = true
+
+# --- Search & Selection ---
+search = { smart-case = true, wrap-around = true }
+scroll-lines = 3
+
+# --- Advanced Features ---
+soft-wrap.enable = true
+text-width = 100
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.file-picker]
+hidden = false
+git-ignore = true
+max-depth = 6
+
+[editor.auto-save]
+focus-lost = true
+after-delay.enable = true
+after-delay.timeout = 3000
+
+[editor.statusline]
+# Separator added between mode and file info
+left = ["mode", "spacer", "spinner", "separator", "file-name", "read-only-indicator", "file-modification-indicator"]
+
+# Center usually stands alone, but you can add spacers if needed
+center = ["version-control"]
+
+# Separators added to group diagnostics, selection info, and file details
+right = [
+  "diagnostics", "separator",
+  "selections", "register", "separator",
+  "position","spacer", "position-percentage","spacer", "total-line-numbers", "separator",
+  "file-encoding", "file-type"
+]
+
+separator = " ❘ "
+# mode.normal = "NORMAL"
+# mode.insert = "INSERT"
+# mode.select = "SELECT"
+[editor.statusline.mode]
+normal = " ◀ [N] ▶"
+insert = " ◀ [I] ▶"
+select = " ◀ [S] ▶"
+
+[editor.lsp]
+display-messages = true
+display-inlay-hints = true
+snippets = true
+auto-signature-help = true
+display-signature-help-docs = true
+goto-reference-include-declaration = true
+
+[editor.whitespace.render]
+space = "none"
+tab = "all"
+newline = "none"
+
+[editor.whitespace.characters]
+tab = "→"
+tabpad = " "
+
+[editor.indent-guides]
+render = true
+character = "│"
+skip-levels = 0
+
+[keys.normal]
+# === File Operations ===
+"C-s" = ":w"
+"C-S" = ":wa"
+"C-q" = ":q"
+"C-Q" = ":qa"
+"esc" = ["collapse_selection", "keep_primary_selection"]
+
+# === Buffer Management ===
+"C-tab" = ":buffer-next"
+"C-S-tab" = ":buffer-previous"
+"L" = ":buffer-next"
+"H" = ":buffer-previous"
+"C-w" = ":buffer-close"
+"A-w" = ":buffer-close-others"
+
+# === Window Splits ===
+"C-h" = "jump_view_left"
+"C-j" = "jump_view_down"
+"C-k" = "jump_view_up"
+"C-l" = "jump_view_right"
+"C-\\" = "vsplit"
+"C-S-\\" = "hsplit"
+
+# === Navigation & Search ===
+"C-p" = "file_picker"
+"C-f" = "global_search"
+"C-g" = "search"
+"C-r" = "replace"
+"C-e" = "file_explorer"
+
+# === LSP & Code Intelligence ===
+"K" = "hover"
+"C-space" = "completion"
+"A-ret" = "code_action"
+
+# === Multiple Cursors & Selection ===
+"C-d" = ["move_char_right", "move_prev_word_start", "move_next_word_end", "search_selection", "search_next", "extend_search_next"]
+"A-j" = "add_newline_below"
+"A-k" = "add_newline_above"
+
+# === Quick Actions ===
+"C-/" = "toggle_comments"
+
+[keys.normal.g]
+d = "goto_definition"
+r = "goto_reference"
+i = "goto_implementation"
+t = "goto_type_definition"
+
+[keys.normal.space]
+f = "file_picker"
+g = "global_search"
+d = "goto_definition"
+r = "rename_symbol"
+a = "code_action"
+s = "symbol_picker"
+w = ":w"
+q = ":q"
+"/" = "toggle_comments"
+
+[keys.insert]
+"C-space" = "completion"
+"C-h" = "delete_char_backward"
+"C-w" = "delete_word_backward"
+"A-backspace" = "delete_word_backward"
+"C-s" = "normal_mode"
+
+[keys.select]
+"C-/" = "toggle_comments"
+"A-j" = "add_newline_below"
+"A-k" = "add_newline_above"

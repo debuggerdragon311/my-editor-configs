@@ -1,0 +1,84 @@
+# ============================================
+# RUST - Optimized for 2026
+# ============================================
+[language-server.rust-analyzer]
+command = "/mnt/local_drive/m-libs/m002/elib/rust-analyzer-x86_64-unknown-linux-gnu"
+
+[language-server.rust-analyzer.config]
+checkOnSave.command = "clippy"
+cargo.allFeatures = true
+procMacro.enable = true
+# Inlay Hints Fixed (Dot notation prevents parsing errors)
+inlayHints.enable = true
+inlayHints.chainingHints.enable = true
+inlayHints.parameterHints.enable = true
+inlayHints.typeHints.enable = true
+
+
+[[language]]
+name = "rust"
+auto-format = true
+language-servers = [ "rust-analyzer" ]
+
+# ============================================
+# ZIG
+# ============================================
+[language-server.zls]
+command = "zls"
+
+[[language]]
+name = "zig"
+auto-format = true
+language-servers = ["zls"]
+
+# ============================================
+# C/C++ - Clangd 21
+# ============================================
+[language-server.clangd]
+command = "clangd"
+args = ["--background-index", "--clang-tidy", "--header-insertion=iwyu"]
+
+[[language]]
+name = "c"
+auto-format = true
+language-servers = ["clangd"]
+
+[[language]]
+name = "cpp"
+auto-format = true
+language-servers = ["clangd"]
+
+# ============================================
+# PYTHON - Portable 3.14 Setup
+# ============================================
+[language-server.pylsp]
+# The absolute path to your portable binary on the local drive
+command = "/mnt/local_drive/m-libs/m002/elib/python-build/bin/pylsp"
+
+[language-server.pylsp.config.pylsp.plugins]
+# Keep these disabled as per your original configuration
+ruff.enabled = false
+autopep8.enabled = false
+flake8.enabled = false
+mccabe.enabled = false
+pycodestyle.enabled = false
+pyflakes.enabled = false
+pylint.enabled = false
+yapf.enabled = false
+
+[[language]]
+name = "python"
+# Link to the defined portable server
+language-servers = [ { name = "pylsp", except-features = [ "format" ] }, "ruff"]
+auto-format = true
+
+
+[language-server.marksman]
+command = "/mnt/local_drive/m-libs/m002/elib/marksman-linux-x64"
+
+[[language]]
+name = "markdown"
+scope = "source.md"
+roots = [".marksman.toml", ".git"]
+language-servers = [ "marksman" ]
+auto-format = true

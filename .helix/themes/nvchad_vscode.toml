@@ -1,0 +1,36 @@
+# A blend of NvChad (Onedark) and VS Code Dark Modern
+"ui.background" = { bg = "bg0" }
+"ui.text" = "fg"
+"ui.cursor" = { fg = "bg0", bg = "blue", modifiers = ["bold"] }
+"ui.selection" = { bg = "selection" }
+"ui.statusline" = { fg = "fg", bg = "bg1" }
+"ui.linenr" = { fg = "gray" }
+"ui.linenr.selected" = { fg = "white", modifiers = ["bold"] }
+"ui.cursorline.primary" = { bg = "bg1" }
+
+# Syntax Highlighting (VS Code / Onedark inspired)
+"keyword" = "purple"
+"function" = "blue"
+"variable" = "fg"
+"string" = "green"
+"constant" = "orange"
+"type" = "yellow"
+"comment" = { fg = "gray", modifiers = ["italic"] }
+"operator" = "cyan"
+"punctuation" = "gray"
+
+[palette]
+# NvChad / VSCode Dark Palette
+bg0 = "#1e1e1e"      # VS Code Dark Modern background
+bg1 = "#252525"      # Lighter background for statusline/cursorline
+fg = "#d4d4d4"       # Standard VS Code text color
+gray = "#6a9955"     # Muted comments/line numbers
+selection = "#264f78" # VS Code default selection blue
+
+blue = "#569cd6"     # Function/Keyword blue
+purple = "#c586c0"   # Statement/Control flow purple
+green = "#ce9178"    # String orange-green tint
+orange = "#d7ba7d"   # Constants
+cyan = "#4ec9b0"     # Operators/Types
+yellow = "#dcdcaa"   # Types/Classes
+white = "#ffffff"
