@@ -11,6 +11,8 @@ Here’s a preview of my Emacs setup:
 
 ![Emacs Screenshot](.emacs/emacs-ss-0.png)
 
+Here’s a preview of my helix setup:
+![Helix Screenshot](.helix/helix-ss-0.png)
 
 > **Warning**:  
 > These configurations are tailored specifically to my personal needs and preferences. They are **not** guaranteed to work outside of my environment. Some settings or plugins may cause issues if used in other setups. Feel free to explore, but **proceed with caution** if you're planning to use them in your own setup.
