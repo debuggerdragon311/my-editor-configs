@@ -1,0 +1,1045 @@
+vim9script
+
+# -------------------------------------------------------------------------
+# Compatibility Guard: Prevent Vim from restoring Vi-compatible flags
+# to legacy plugins (rainbow, ctrlp, fugitive) in custom/portable runners
+# -------------------------------------------------------------------------
+augroup PluginCompatibilityGuard
+    autocmd!
+    autocmd SourcePost * set nocompatible cpoptions&vim
+augroup END
+
+set nocompatible
+set cpoptions&vim
+
+filetype plugin indent on
+syntax enable
+
+set encoding=utf8
+set ffs=unix,dos,mac
+set history=500
+set autoread
+set hidden
+set updatetime=250
+set lazyredraw
+set ttyfast
+
+# Backups & Swap
+set nobackup
+set nowb
+set noswapfile
+
+# -------------------------------------------------------------------------
+# 2. UI & Display
+# -------------------------------------------------------------------------
+g:rainbow_active = 1
+g:rainbow_conf = {
+    separately: {
+        nerdtree: 0
+    }
+}
+
+if has("termguicolors")
+    set termguicolors
+endif
+
+set background=dark
+set number
+set relativenumber
+set numberwidth=4
+set signcolumn=yes
+set cursorline
+set scrolloff=8
+set sidescrolloff=8
+
+# Clean layout & whitespace indicators
+set fillchars=vert:│,fold:·,eob:\
+set list
+set listchars=tab:│\ ,trail:·,extends:»,precedes:«
+
+# Global Unified Statusline & Top Title Bar
+if has('nvim')
+    set laststatus=3
+else
+    set laststatus=2
+endif
+
+set showtabline=2
+set noshowmode
+set cmdheight=1
+set shortmess+=c
+set colorcolumn=80,100
+
+# --- Zig Rich Doom One Highlighting ---
+hi zigKeyword        guifg=#51afef gui=bold     ctermfg=75  cterm=bold
+hi zigType           guifg=#ECBE7B gui=bold     ctermfg=222 cterm=bold
+hi zigStorageClass   guifg=#51afef gui=bold     ctermfg=75  cterm=bold
+hi zigBuiltinFn      guifg=#c678dd gui=bold     ctermfg=176 cterm=bold
+hi zigFunctionCall   guifg=#51afef gui=NONE     ctermfg=75  cterm=NONE
+hi zigFunction       guifg=#ECBE7B gui=bold     ctermfg=222 cterm=bold
+hi zigConstant       guifg=#da8548 gui=NONE     ctermfg=173 cterm=NONE
+hi zigDecNumber      guifg=#da8548 gui=NONE     ctermfg=173 cterm=NONE
+hi zigString         guifg=#98be65 gui=NONE     ctermfg=114 cterm=NONE
+hi zigCommentLine    guifg=#5B6268 gui=italic   ctermfg=241 cterm=italic
+hi zigTodo           guifg=#ECBE7B guibg=#282c34 gui=bold ctermfg=222 ctermbg=235 cterm=bold
+hi zigOperator       guifg=#51afef gui=NONE     ctermfg=75  cterm=NONE
+hi zigMember         guifg=#bbc2cf gui=NONE     ctermfg=251 cterm=NONE
+
+hi Comment             guifg=#5B6268 gui=italic     ctermfg=241 cterm=italic
+hi SpecialComment      guifg=#9ca0a4 gui=italic     ctermfg=247 cterm=italic
+hi Todo                guifg=#ECBE7B guibg=#282c34 gui=bold ctermfg=222 ctermbg=235 cterm=bold
+
+# -------------------------------------------------------------------------
+# 3. Indentation & Search
+# -------------------------------------------------------------------------
+set expandtab
+set smarttab
+set shiftwidth=4
+set tabstop=4
+set autoindent
+set smartindent
+set wrap
+
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+set magic
+set showmatch
+set mat=2
+
+# -------------------------------------------------------------------------
+# 4. Terminal Cursor Shapes & Doom One Injection (OSC 12)
+# -------------------------------------------------------------------------
+var doom_cursor = '#51afef'
+
+if has('nvim')
+    set guicursor=n-v-c-sm:block-Cursor,i-ci-ve:ver25-Cursor,r-cr-o:hor20-Cursor
+else
+    if exists('$TMUX')
+        &t_ti ..= "\<Esc>Ptmux;\<Esc>\<Esc>]12;" .. doom_cursor .. "\x7\<Esc>\\"
+        &t_te ..= "\<Esc>Ptmux;\<Esc>\<Esc>]112\x7\<Esc>\\"
+        &t_SI  = "\<Esc>Ptmux;\<Esc>\<Esc>[6 q\<Esc>]12;" .. doom_cursor .. "\x7\<Esc>\\"
+        &t_SR  = "\<Esc>Ptmux;\<Esc>\<Esc>[4 q\<Esc>]12;" .. doom_cursor .. "\x7\<Esc>\\"
+        &t_EI  = "\<Esc>Ptmux;\<Esc>\<Esc>[2 q\<Esc>]12;" .. doom_cursor .. "\x7\<Esc>\\"
+    else
+        &t_ti ..= "\<Esc>]12;" .. doom_cursor .. "\x7"
+        &t_te ..= "\<Esc>]112\x7"
+        &t_SI  = "\<Esc>[6 q\<Esc>]12;" .. doom_cursor .. "\x7"
+        &t_SR  = "\<Esc>[4 q\<Esc>]12;" .. doom_cursor .. "\x7"
+        &t_EI  = "\<Esc>[2 q\<Esc>]12;" .. doom_cursor .. "\x7"
+    endif
+
+    augroup ResetTerminalCursor
+        autocmd!
+        if exists('$TMUX')
+            autocmd VimLeave * silent! execute '!printf "\ePtmux;\e\e[2 q\e]112\a\e\\"'
+        else
+            autocmd VimLeave * silent! execute '!printf "\e[2 q\e]112\a"'
+        endif
+    augroup END
+endif
+
+# -------------------------------------------------------------------------
+# 5. Color Palette & Syntax (Doom One)
+# -------------------------------------------------------------------------
+g:colors_name = 'doom-one'
+
+if (has('termguicolors') && &termguicolors) || has('gui_running')
+    g:terminal_ansi_colors = [
+        '#282c34', '#ff6c6b', '#98be65', '#da8548',
+        '#51afef', '#c678dd', '#46D9FF', '#bbc2cf',
+        '#3f444a', '#ff6c6b', '#98be65', '#ECBE7B',
+        '#51afef', '#c678dd', '#46D9FF', '#efefef'
+    ]
+endif
+
+# Base Surfaces & Doom Cursor
+hi Normal          guifg=#bbc2cf guibg=#282c34 gui=NONE     ctermfg=251 ctermbg=235 cterm=NONE
+hi Cursor          guifg=#282c34 guibg=#51afef gui=NONE     ctermfg=235 ctermbg=75  cterm=NONE
+hi CursorIM        guifg=#282c34 guibg=#51afef gui=NONE     ctermfg=235 ctermbg=75  cterm=NONE
+hi lCursor         guifg=#282c34 guibg=#51afef gui=NONE     ctermfg=235 ctermbg=75  cterm=NONE
+
+hi CursorLine      guifg=NONE    guibg=#2E323C gui=NONE     ctermfg=NONE ctermbg=237 cterm=NONE
+hi CursorColumn    guifg=NONE    guibg=#2E323C gui=NONE     ctermfg=NONE ctermbg=237 cterm=NONE
+hi LineNr          guifg=#3f444a guibg=#282c34 gui=NONE     ctermfg=238 ctermbg=235 cterm=NONE
+hi CursorLineNr    guifg=#51afef guibg=#2E323C gui=bold     ctermfg=75  ctermbg=237 cterm=bold
+hi SignColumn      guifg=#bbc2cf guibg=#282c34 gui=NONE     ctermfg=251 ctermbg=235 cterm=NONE
+hi VertSplit       guifg=#3f444a guibg=#282c34 gui=NONE     ctermfg=238 ctermbg=235 cterm=NONE
+hi Search          guifg=#282c34 guibg=#ECBE7B gui=NONE     ctermfg=235 ctermbg=222 cterm=NONE
+hi IncSearch       guifg=#1b2229 guibg=#efefef gui=bold     ctermfg=234 ctermbg=255 cterm=bold
+
+# Doom One Visual Mode
+hi Visual          guifg=NONE    guibg=#3E4556 gui=NONE     ctermfg=NONE ctermbg=239 cterm=NONE
+
+hi MatchParen      guifg=#ff6c6b guibg=NONE    gui=bold     ctermfg=203 ctermbg=NONE cterm=bold
+hi ColorColumn     guifg=NONE    guibg=#2E323C gui=NONE     ctermfg=NONE ctermbg=237 cterm=NONE
+hi EndOfBuffer     guifg=#282c34 guibg=#282c34 gui=NONE     ctermfg=235 ctermbg=235 cterm=NONE
+hi NonText         guifg=#5B6268 guibg=NONE    gui=NONE     ctermfg=241 ctermbg=NONE cterm=NONE
+hi Folded          guifg=#5B6268 guibg=#2E323C gui=NONE     ctermfg=241 ctermbg=237 cterm=NONE
+
+# Code Syntax
+hi Comment         guifg=#5B6268 gui=italic                 ctermfg=241 cterm=italic
+hi Constant        guifg=#a9a1e1 gui=bold                   ctermfg=139 cterm=bold
+hi String          guifg=#98be65 gui=NONE                   ctermfg=114 cterm=NONE
+hi Character       guifg=#98be65 gui=NONE                   ctermfg=114 cterm=NONE
+hi Number          guifg=#da8548 gui=NONE                   ctermfg=173 cterm=NONE
+hi Boolean         guifg=#da8548 gui=NONE                   ctermfg=173 cterm=NONE
+hi Float           guifg=#da8548 gui=NONE                   ctermfg=173 cterm=NONE
+
+hi Identifier      guifg=#c678dd gui=NONE                   ctermfg=176 cterm=NONE
+hi Function        guifg=#ECBE7B gui=bold                   ctermfg=222 cterm=bold
+hi Statement       guifg=#51afef gui=NONE                   ctermfg=75  cterm=NONE
+hi Conditional     guifg=#51afef gui=bold                   ctermfg=75  cterm=bold
+hi Repeat          guifg=#51afef gui=bold                   ctermfg=75  cterm=bold
+hi Label           guifg=#51afef gui=NONE                   ctermfg=75  cterm=NONE
+hi Operator        guifg=#51afef gui=NONE                   ctermfg=75  cterm=NONE
+hi Keyword         guifg=#51afef gui=NONE                   ctermfg=75  cterm=NONE
+hi Exception       guifg=#ff6c6b gui=bold                   ctermfg=203 cterm=bold
+
+hi PreProc         guifg=#c678dd gui=NONE                   ctermfg=176 cterm=NONE
+hi Include         guifg=#51afef gui=bold                   ctermfg=75  cterm=bold
+hi Define          guifg=#51afef gui=NONE                   ctermfg=75  cterm=NONE
+hi Macro           guifg=#51afef gui=NONE                   ctermfg=75  cterm=NONE
+hi Type            guifg=#ECBE7B gui=bold                   ctermfg=222 cterm=bold
+hi StorageClass    guifg=#51afef gui=bold                   ctermfg=75  cterm=bold
+hi Structure       guifg=#51afef gui=bold                   ctermfg=75  cterm=bold
+hi Typedef         guifg=#51afef gui=bold                   ctermfg=75  cterm=bold
+hi Special         guifg=#a9a1e1 gui=NONE                   ctermfg=139 cterm=NONE
+hi Delimiter       guifg=#51afef gui=NONE                   ctermfg=75  cterm=NONE
+hi Error           guifg=#ff6c6b guibg=#282c34 gui=bold     ctermfg=203 ctermbg=235 cterm=bold
+hi Todo            guifg=#ECBE7B guibg=#282c34 gui=bold     ctermfg=222 ctermbg=235 cterm=bold
+
+# Popups & Autocomplete
+hi Pmenu           guifg=#D1D6DF guibg=#3E4556 gui=NONE     ctermfg=251 ctermbg=239 cterm=NONE
+hi PmenuSel        guifg=#1b2229 guibg=#51afef gui=bold     ctermfg=234 ctermbg=75  cterm=bold
+hi PmenuSbar       guifg=NONE    guibg=#21242b gui=NONE     ctermbg=235
+hi PmenuThumb      guifg=NONE    guibg=#666660 gui=NONE     ctermbg=241
+
+# -------------------------------------------------------------------------
+# Top Tabline 3-Shade Theme Matching
+# -------------------------------------------------------------------------
+# Base Bar & Left Tabs
+hi TabLineFill     guifg=#21242b guibg=#21242b gui=NONE     ctermfg=235 ctermbg=235 cterm=NONE
+hi TabLine         guifg=#e6e6e6 guibg=#21242b gui=NONE     ctermfg=254 ctermbg=235 cterm=NONE
+hi TabLineSel      guifg=#51afef guibg=#282c34 gui=bold     ctermfg=75  ctermbg=235 cterm=bold
+hi TabSelToFill    guifg=#282c34 guibg=#21242b gui=NONE     ctermfg=235 ctermbg=235 cterm=NONE
+hi TabInactToFill  guifg=#21242b guibg=#21242b gui=NONE     ctermfg=235 ctermbg=235 cterm=NONE
+hi TabSelToInact   guifg=#282c34 guibg=#21242b gui=NONE     ctermfg=235 ctermbg=235 cterm=NONE
+hi TabInactToSel   guifg=#21242b guibg=#282c34 gui=NONE     ctermfg=235 ctermbg=235 cterm=NONE
+hi TabLineMod      guifg=#ECBE7B guibg=#282c34 gui=bold     ctermfg=222 ctermbg=235 cterm=bold
+
+# Right Info Modules (Unified 3-Shade Flow: Dark Grey -> Muted Blue -> Doom Blue)
+hi TabR_Trans1     guifg=#3E4556 guibg=#21242b gui=NONE     ctermfg=239 ctermbg=235 cterm=NONE
+hi TabR_Sec1       guifg=#bbc2cf guibg=#3E4556 gui=NONE     ctermfg=251 ctermbg=239 cterm=NONE
+hi TabR_Trans2     guifg=#51afef guibg=#3E4556 gui=NONE     ctermfg=75  ctermbg=239 cterm=NONE
+hi TabR_Sec2       guifg=#1b2229 guibg=#51afef gui=bold     ctermfg=234 ctermbg=75  cterm=bold
+
+# NERDTree Highlights
+hi Directory          guifg=#ECBE7B gui=bold                ctermfg=222 cterm=bold
+hi NERDTreeDirSlash   guifg=#51afef                         ctermfg=75
+hi NERDTreeOpenable   guifg=#51afef gui=bold                ctermfg=75  cterm=bold
+hi NERDTreeClosable   guifg=#51afef                         ctermfg=75
+hi NERDTreeFile       guifg=#bbc2cf                         ctermfg=251
+hi NERDTreeExecFile   guifg=#98be65 gui=bold                ctermfg=114 cterm=bold
+hi NERDTreeCWD        guifg=#c678dd gui=bold                ctermfg=176 cterm=bold
+hi NERDTreeHelp       guifg=#5B6268                         ctermfg=241
+
+# -------------------------------------------------------------------------
+# 6. Distinct Dynamic Statusline Engine (Unified Across Windows)
+# -------------------------------------------------------------------------
+def GitBranch(): string
+    if exists('b:git_branch')
+        return b:git_branch
+    endif
+    var branch = ''
+    if executable('git') && expand('%:p') !=# ''
+        var dir = expand('%:p:h')
+        var res = system('git -C ' .. shellescape(dir) .. ' rev-parse --abbrev-ref HEAD 2>/dev/null')
+        if v:shell_error == 0
+            branch = substitute(res, '\n', '', '')
+        endif
+    endif
+    b:git_branch = branch
+    return branch
+enddef
+
+augroup GitBranchCache
+    autocmd!
+    autocmd BufEnter,BufWritePost * unlet! b:git_branch
+augroup END
+
+def StatusModeText(): string
+    var m = mode()
+    var modes = {
+        'n': ' NORMAL ',
+        'i': ' INSERT ',
+        'v': ' VISUAL ',
+        'V': ' V-LINE ',
+        "\<C-v>": ' V-BLOCK ',
+        'R': ' REPLACE ',
+        'c': ' COMMAND ',
+        't': ' TERMINAL '
+    }
+    return get(modes, m, ' NORMAL ')
+enddef
+
+def UpdateStatusHighlights(): void
+    var m = mode()
+    var mode_color = '#51afef'
+    var mode_text  = '#1b2229'
+    var mode_cterm = '75'
+    var text_cterm = '234'
+
+    if m ==# 'i'
+        mode_color = '#98be65'
+        mode_cterm = '114'
+    elseif m ==# 'v' || m ==# 'V' || m ==# "\<C-v>"
+        mode_color = '#c678dd'
+        mode_cterm = '176'
+    elseif m ==# 'R'
+        mode_color = '#ff6c6b'
+        mode_cterm = '203'
+    elseif m ==# 'c'
+        mode_color = '#ECBE7B'
+        mode_cterm = '222'
+    endif
+
+    hi StatusLine   guifg=#bbc2cf guibg=#3E4556 gui=NONE ctermfg=251 ctermbg=239 cterm=NONE
+    hi StatusLineNC guifg=#5B6268 guibg=#2E323C gui=NONE ctermfg=241 ctermbg=237 cterm=NONE
+    hi SL_Empty     guifg=#bbc2cf guibg=#21242b gui=NONE ctermfg=251 ctermbg=235 cterm=NONE
+
+    execute $'hi SL_Mode guifg={mode_text} guibg={mode_color} gui=bold ctermfg={text_cterm} ctermbg={mode_cterm} cterm=bold'
+    execute $'hi SL_Pos  guifg={mode_text} guibg={mode_color} gui=bold ctermfg={text_cterm} ctermbg={mode_cterm} cterm=bold'
+    hi SL_Git       guifg=#bbc2cf guibg=#3E4556 gui=bold ctermfg=251 ctermbg=239 cterm=bold
+    hi SL_File      guifg=#bbc2cf guibg=#2E323C gui=bold ctermfg=251 ctermbg=237 cterm=bold
+    hi SL_Mod       guifg=#ECBE7B guibg=#2E323C gui=bold ctermfg=222 ctermbg=237 cterm=bold
+    hi SL_RO        guifg=#ff6c6b guibg=#2E323C gui=bold ctermfg=203 ctermbg=237 cterm=bold
+    hi SL_Info      guifg=#bbc2cf guibg=#3E4556 gui=NONE ctermfg=251 ctermbg=239 cterm=NONE
+
+    execute $'hi SL_ModeToGit   guifg={mode_color} guibg=#3E4556 gui=NONE ctermfg={mode_cterm} ctermbg=239'
+    execute $'hi SL_ModeToFile  guifg={mode_color} guibg=#2E323C gui=NONE ctermfg={mode_cterm} ctermbg=237'
+    hi SL_GitToFile   guifg=#3E4556 guibg=#2E323C gui=NONE ctermfg=239 ctermbg=237
+    hi SL_FileToEmpty guifg=#2E323C guibg=#21242b gui=NONE ctermfg=237 ctermbg=235
+    hi SL_EmptyToInfo guifg=#3E4556 guibg=#21242b gui=NONE ctermfg=239 ctermbg=235
+    execute $'hi SL_InfoToPos   guifg={mode_color} guibg=#3E4556 gui=NONE ctermfg={mode_cterm} ctermbg=239'
+enddef
+
+def g:RenderStatusLine(): string
+    UpdateStatusHighlights()
+    var branch = GitBranch()
+    var s = ''
+
+    s ..= '%#SL_Mode#' .. StatusModeText()
+    if branch !=# ''
+        s ..= '%#SL_ModeToGit#%#SL_Git#  ' .. branch .. ' %#SL_GitToFile#'
+    else
+        s ..= '%#SL_ModeToFile#'
+    endif
+
+    s ..= '%#SL_File# %f '
+    s ..= '%#SL_Mod#%{&modified ? "● " : ""}'
+    s ..= '%#SL_RO#%{&readonly ? "[RO] " : ""}'
+    s ..= '%#SL_FileToEmpty#'
+    s ..= '%#SL_Empty#%='
+
+    var ft = empty(&filetype) ? 'none' : &filetype
+    var enc = empty(&fileencoding) ? &encoding : &fileencoding
+    var fmt = &fileformat
+    s ..= '%#SL_EmptyToInfo#%#SL_Info# ' .. ft .. '  ' .. enc .. ' [' .. fmt .. '] '
+    s ..= '%#SL_InfoToPos#%#SL_Pos# Ln %l, Col %c  %p%% '
+
+    return s
+enddef
+
+set statusline=%!g:RenderStatusLine()
+
+augroup StatuslineColors
+    autocmd!
+    autocmd ModeChanged,CursorMoved,CursorMovedI,BufEnter,WinEnter * UpdateStatusHighlights()
+    autocmd FileType nerdtree setlocal statusline=%#SL_Empty#
+augroup END
+
+# -------------------------------------------------------------------------
+# 7. Tabline Engine (Matching 3-Shade Gradient & Clean Icons)
+# -------------------------------------------------------------------------
+def g:RenderTabLine(): string
+    var s = ''
+    var total_tabs = tabpagenr('$')
+    var curr_tab = tabpagenr()
+
+    for i in range(total_tabs)
+        var tabnr = i + 1
+        var buflist = tabpagebuflist(tabnr)
+        var bufnr = buflist[tabpagewinnr(tabnr) - 1]
+        var bname = bufname(bufnr)
+        var is_mod = getbufvar(bufnr, '&mod')
+        var label = (bname != '' ? fnamemodify(bname, ':t') : '[No Name]')
+
+        if tabnr == curr_tab
+            s ..= '%#TabLineSel# ' .. tabnr .. '  ' .. label .. (is_mod ? ' %#TabLineMod#●%#TabLineSel# ' : ' ')
+            if tabnr < total_tabs
+                s ..= '%#TabSelToInact#'
+            else
+                s ..= '%#TabSelToFill#'
+            endif
+        else
+            s ..= '%#TabLine# ' .. tabnr .. '  ' .. label .. (is_mod ? ' ● ' : ' ')
+            if tabnr + 1 == curr_tab
+                s ..= '%#TabInactToSel#'
+            else
+                s ..= '%#TabInactToFill#'
+            endif
+        endif
+    endfor
+
+    s ..= '%#TabLineFill#%='
+
+    var cwd = fnamemodify(getcwd(), ':t')
+    var cwd_display = (cwd != '' ? cwd : 'root')
+    var buf_count = len(filter(range(1, bufnr('$')), (_, v) => buflisted(v)))
+    var time = strftime('%H:%M')
+
+    s ..= '%#TabR_Trans1#%#TabR_Sec1#  ' .. cwd_display .. '  󰓩 ' .. buf_count .. ' '
+    s ..= '%#TabR_Trans2#%#TabR_Sec2#  ' .. time .. ' '
+
+    return s
+enddef
+
+set tabline=%!g:RenderTabLine()
+
+# -------------------------------------------------------------------------
+# 8. NERDTree Configuration & Autocommands
+# -------------------------------------------------------------------------
+g:NERDTreeShowHidden = 1
+g:NERDTreeMinimalUI = 1
+g:NERDTreeWinSize = 30
+g:NERDTreeCascadeSingleChildDir = 1
+g:NERDTreeDirArrowExpandable = '▸'
+g:NERDTreeDirArrowCollapsible = '▾'
+g:NERDTreeIgnore = ['^\.git$', '^\.DS_Store$', '^node_modules$', '\.pyc$']
+
+# --- Modern DevIcons Settings ---
+g:webdevicons_enable = 1
+g:webdevicons_enable_nerdtree = 1
+g:webdevicons_conceal_nerdtree_brackets = 1
+
+# Clean folder icons
+g:WebDevIconsUnicodeDecorateFolderNodes = 1
+g:DevIconsEnableFoldersOpenClose = 1
+g:WebDevIconsUnicodeDecorateFolderNodeDefaultSymbol = ''
+g:DevIconsDefaultFolderOpenSymbol = ''
+
+# Modern file icon overrides (Rust, Git, Toml, Lock)
+g:WebDevIconsUnicodeDecorateFileNodesExactSymbols = {
+    '.gitignore': '',
+    'Cargo.toml': '',
+    'Cargo.lock': ''
+}
+
+g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols = {
+    'toml': '',
+    'lock': '',
+    'rs':   ''
+}
+
+# Auto-hide the [ ] brackets inside NERDTree
+augroup NERDTreeCleanIcons
+    autocmd!
+    autocmd FileType nerdtree setlocal conceallevel=3 concealcursor=nvic
+augroup END
+
+def CloseNERDTreeIfLast(): void
+    if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree()
+        feedkeys(":quit\<CR>:\<BS>")
+    endif
+enddef
+
+def PreventNERDTreeOpen(): void
+    if winnr() == winnr('h') && bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1
+        var curbuf = bufnr()
+        buffer %%
+        wincmd w
+        execute $'buffer {curbuf}'
+    endif
+enddef
+
+augroup NERDTreeAutoRules
+    autocmd!
+    autocmd BufEnter * CloseNERDTreeIfLast()
+    autocmd BufEnter * PreventNERDTreeOpen()
+augroup END
+
+# -------------------------------------------------------------------------
+# 9. Mappings & Shortcuts
+# -------------------------------------------------------------------------
+g:mapleader = ","
+
+# NERDTree Toggle & Focus
+nnoremap <silent> <leader>e :NERDTreeToggle<CR>
+nnoremap <silent> <Space>e  :NERDTreeToggle<CR>
+nnoremap <silent> <leader>f :NERDTreeFind<CR>
+
+# Quick Actions
+nnoremap <leader>w :w!<CR>
+nnoremap <silent> <Esc> :noh<CR><Esc>
+nnoremap <silent> <leader><CR> :noh<CR>
+nnoremap 0 ^
+
+# Window Navigation
+nnoremap <C-j> <C-W>j
+nnoremap <C-k> <C-W>k
+nnoremap <C-h> <C-W>h
+nnoremap <C-l> <C-W>l
+
+# Buffer Navigation
+nnoremap <leader>l :bnext<CR>
+nnoremap <leader>h :bprevious<CR>
+nnoremap <leader>bd :bdelete<CR>
+nnoremap <leader>ba :bufdo bd<CR>
+
+# Tab Navigation
+nnoremap <leader>tn :tabnew<CR>
+nnoremap <leader>tc :tabclose<CR>
+nnoremap <leader>to :tabonly<CR>
+nnoremap <leader>t<leader> :tabnext<CR>
+
+# Move Line / Block
+nnoremap <M-j> mz:m+<CR>`z
+nnoremap <M-k> mz:m-2<CR>`z
+vnoremap <M-j> :m'>+<CR>`<my`>mzgv`yo`z
+vnoremap <M-k> :m'<-2<CR>`>my`<mzgv`yo`z
+
+# -------------------------------------------------------------------------
+# 10. Autocommands & Maintenance
+# -------------------------------------------------------------------------
+augroup EditorMaintenance
+    autocmd!
+    autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | execute "normal! g'\"" | endif
+    autocmd FocusGained,BufEnter * silent! checktime
+augroup END
+
+def TrimWhitespace(): void
+    var save_cursor = getpos('.')
+    var old_query = getreg('/')
+    silent! keeppatterns :%s/\s\+$//e
+    setpos('.', save_cursor)
+    setreg('/', old_query)
+enddef
+
+augroup WhiteSpaceClean
+    autocmd!
+    autocmd BufWritePre *.zig,*.c,*.cpp,*.rs,*.go,*.py,*.js,*.ts,*.sh TrimWhitespace()
+augroup END
+
+# -------------------------------------------------------------------------
+# 11. Cinematic Game Start Screen (VOID Enhanced Proximity Edition)
+# -------------------------------------------------------------------------
+var anim_timer = -1
+var anim_idx = 0
+var start_bufnr = -1
+var loader_line_nr = 0
+var loader_pad = 0
+
+final black_hole: list<string> = [
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠖⠃⠀⠀⠀⡁⠀⠀⠀⠀⠀⠐⠆⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⢔⡤⠊⠁⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠁⠀⠀⠘⠁⢀⠀⠀⠀⠀⢈⠓⠂⠠⡄⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣶⠿⠞⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠒⠁⠀⠠⡚⠁⢀⣙⣀⣈⡩⠬⢁⠀⢑⠶⠤⡆⠤⡀⠀⠀⠀⠀⠀⠀⢀⠴⢲⣋⣽⣷⠟⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⢠⠀⠀⣶⠃⠗⣡⣶⣮⣿⡿⠿⠿⢿⣿⣷⣶⣤⣤⠤⠴⠦⠬⣤⣤⠄⣉⠉⠝⢲⣿⡷⠻⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠁⡀⡸⠁⣰⣿⡿⠛⠋⣁⡀⠤⠤⢄⡀⠈⠛⢯⣿⣟⣾⣶⣶⣮⣭⣵⣾⣿⣟⠿⠉⢨⠖⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⠀⢠⠳⡧⣻⡿⠋⢀⠒⠉⠀⠀⠀⠀⠀⠀⠉⠢⠀⠀⠙⠛⣻⣿⣿⣿⢿⣿⣿⠟⡱⠖⠊⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⢠⣧⠓⣾⣿⠁⠀⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⢦⣠⣾⣿⠿⣿⣿⣿⡿⣫⠏⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⠂⢃⣸⣿⠇⢠⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣿⠟⢿⠁⠸⡿⣿⣯⡶⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⢘⡄⠘⣿⣿⠀⠸⡀⠀⠀⠀⠀⠀⢀⣀⣴⣾⣿⡿⡟⡋⠐⡇⠀⢸⣿⣿⠃⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢡⠘⢰⣿⡿⡆⠀⣇⠀⣀⣠⣤⣶⣿⢷⢟⠻⠀⠈⠀⠀⠀⡇⠀⣼⣿⣿⠂⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠔⢀⡴⢯⣾⠟⡏⢀⣠⣿⣿⣿⣟⢟⡋⠅⠘⠉⠀⠀⠀⠀⢀⠀⠁⢠⣿⣟⠃⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⠞⣻⣷⡿⢙⣩⣶⡿⠿⠛⠉⠑⢡⡁⠀⠀⠀⠀⠀⠀⢀⠔⠁⠀⣰⣿⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣡⣾⣥⣾⢫⡦⠾⠛⠙⠉⠀⠀⢀⣀⠀⠈⠙⠓⠦⠤⠤⠀⠘⠁⢀⡤⣾⡿⠏⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠔⣴⣾⣿⣿⢟⢝⠢⠃⢀⣤⢴⣾⣮⣷⣶⢿⣶⡤⣐⡀⠀⣠⣤⢶⣪⣿⣿⡿⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⡀⣦⣾⡿⡛⠵⠺⢈⡠⠶⠿⠥⠥⡭⠉⠉⢱⡛⠻⠿⣿⣿⣿⣿⣿⠿⠿⠿⠟⠭⠛⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⢀⢴⠕⣋⠝⠕⠐⠀⠔⠉⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠁⠉⠁⠁⠁⠈⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⢀⣠⠁⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀'
+]
+
+final anim_frames: list<string> = [
+    '■   ▪   ▪',
+    '◼   ◼   ▪',
+    '▪   ■   ▪',
+    '▪   ◼   ◼',
+    '▪   ▪   ■',
+    '▪   ▪   ◼',
+    '▪   ▪   ▪',
+    '◼   ▪   ▪'
+]
+
+def ApplySolixHighlights(): void
+    hi BHCore            guifg=#efefef gui=bold     ctermfg=255 cterm=bold
+    hi BHDense           guifg=#bbc2cf gui=bold     ctermfg=251 cterm=bold
+    hi BHMid             guifg=#73797e gui=NONE     ctermfg=243 cterm=NONE
+    hi BHFine            guifg=#3f444a gui=NONE     ctermfg=238 cterm=NONE
+
+    hi SolixLogo         guifg=#51afef gui=bold     ctermfg=75  cterm=bold
+    hi SolixSub          guifg=#46D9FF gui=bold     ctermfg=81  cterm=bold
+    hi SolixSing         guifg=#c678dd gui=bold     ctermfg=176 cterm=bold
+    hi GameArrow         guifg=#da8548 gui=bold     ctermfg=173 cterm=bold
+    hi GameKey           guifg=#a9a1e1 gui=bold     ctermfg=139 cterm=bold
+    hi GameLabel         guifg=#bbc2cf gui=bold     ctermfg=251 cterm=bold
+    hi GameQuote         guifg=#5B6268 gui=italic   ctermfg=241 cterm=italic
+    hi GameFormula       guifg=#98be65 gui=NONE     ctermfg=114 cterm=NONE
+    hi GameFormulaBar    guifg=#98be65 gui=NONE     ctermfg=114 cterm=NONE
+    hi GameVersion       guifg=#73797e gui=italic   ctermfg=243 cterm=italic
+
+    hi AnimPeak          guifg=#51afef gui=bold     ctermfg=75  cterm=bold
+    hi AnimMid           guifg=#46D9FF gui=bold     ctermfg=81  cterm=bold
+    hi AnimLow           guifg=#3f444a gui=NONE     ctermfg=238 cterm=NONE
+
+    hi TeleIcons         guifg=#da8548 gui=bold     ctermfg=173 cterm=bold
+    hi TeleLab           guifg=#51afef gui=bold     ctermfg=75  cterm=bold
+    hi TeleAuthor        guifg=#c678dd gui=bold     ctermfg=176 cterm=bold
+    hi TeleBase          guifg=#5B6268 gui=italic   ctermfg=241 cterm=italic
+enddef
+
+def StopAnimation(): void
+    if anim_timer != -1
+        timer_stop(anim_timer)
+        anim_timer = -1
+    endif
+enddef
+
+def UpdateLoader(timer: number): void
+    if start_bufnr == -1 || bufnr('') != start_bufnr || !bufexists(start_bufnr)
+        StopAnimation()
+        return
+    endif
+
+    anim_idx = (anim_idx + 1) % len(anim_frames)
+    var bar = anim_frames[anim_idx]
+    var line_str = repeat(' ', loader_pad) .. bar
+
+    setlocal modifiable
+    setline(loader_line_nr, line_str)
+    setlocal nomodifiable nomodified
+enddef
+
+def CustomStartScreen(forced = false): void
+    if !forced
+        if argc() > 0 || line2byte('$') != -1 || &insertmode || expand('%') !=# ''
+            return
+        endif
+    endif
+
+    StopAnimation()
+
+    enew
+    start_bufnr = bufnr('')
+
+    setlocal bufhidden=wipe buftype=nofile nobuflisted nolist noswapfile
+    setlocal nocursorcolumn nocursorline nonumber norelativenumber
+    setlocal colorcolumn= signcolumn=no nomodifiable
+
+    var hour = str2nr(strftime('%H'))
+    var greeting = ''
+    if hour >= 5 && hour < 12
+        greeting = 'good morning · sacred path awaits'
+    elseif hour >= 12 && hour < 18
+        greeting = 'good afternoon · gravity pulls forward'
+    elseif hour >= 18 && hour < 22
+        greeting = 'good evening · peace in the orbit'
+    else
+        greeting = 'midnight session · silent void'
+    endif
+
+    var hud = [
+        '     ╦  ╦ ╔═╗ ╦ ╠═╗ *',
+        '  *  ╚╗╔╝ ║ ║ ║ ║ ║',
+        '      ╚╝  ╚═╝ ╩ ╠═╝',
+        '',
+        '  ── EVENT HORIZON ──',
+        '     (SINGULARITY)',
+        '',
+        '',
+        '     ► [e]  NEW SESSION',
+        '',
+        '     ► [r]  RECENT FILES',
+        '',
+        '     ► [o]  EXPLORE TREE',
+        '',
+        '     ► [q]  QUIT SESSION',
+        '',
+        '',
+        '',
+        $'    ~ {greeting} ~',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '            c³ kᵦ A',
+        '    Sᵦₕ  = ──────────',
+        '            4 G ℏ',
+        ''
+    ]
+
+    var max_hud_width = max(mapnew(hud, (_, v) => strdisplaywidth(v)))
+    var hud_column_width = max([max_hud_width + 8, 44])
+
+    var final_lines: list<string> = []
+    var total_rows = max([len(hud), len(black_hole)])
+
+    for i in range(total_rows)
+        var hud_text   = (i < len(hud)) ? hud[i] : ''
+        var pad_needed = max([0, hud_column_width - strdisplaywidth(hud_text)])
+        var left_part  = hud_text .. repeat(' ', pad_needed)
+
+        var raw_art    = (i < len(black_hole)) ? substitute(black_hole[i], '[\u2800 ]\+$', '', '') : ''
+
+        add(final_lines, left_part .. raw_art)
+    endfor
+
+    var win_height = winheight(0)
+    var win_width  = winwidth(0)
+    var art_width  = max(mapnew(final_lines, (_, v) => strdisplaywidth(v)))
+    var pad_left   = max([0, (win_width - art_width) / 2])
+
+    anim_idx = 0
+    var initial_loader = anim_frames[0]
+    var loader_full = repeat(' ', hud_column_width + 24) .. initial_loader
+    add(final_lines, loader_full)
+
+    add(final_lines, '')
+    add(final_lines, repeat(' ', hud_column_width + 17) .. 'VIM - Vi IMproved 9.2')
+
+    var padded_content = mapnew(final_lines, (_, v) => repeat(' ', pad_left) .. v)
+    var pad_top = max([0, (win_height - len(padded_content)) / 2 - 1])
+    var final_screen = repeat([''], pad_top) + padded_content
+
+    loader_line_nr = pad_top + (total_rows + 1)
+    loader_pad = pad_left + hud_column_width + 24
+
+    setlocal modifiable
+    setline(1, final_screen)
+    setlocal nomodifiable nomodified
+
+    ApplySolixHighlights()
+    syntax clear
+
+    syntax match BHFine             /[\u2801-\u28FF]/ contains=BHCore,BHDense,BHMid
+    syntax match BHMid              /[⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿⡿⣟⣯⢟⣮⣭⣵⣠⣤]/ contains=BHCore,BHDense
+    syntax match BHDense            /[⣶⣷⣾⢿]/ contains=BHCore
+    syntax match BHCore             /[⣿]/
+
+    syntax match SolixLogo          /[╔═╗╚╦╩║╬╝⁺╠]/
+    syntax match SolixSub           /EVENT\s\+HORIZON/
+    syntax match SolixSing          /SINGULARITY/
+    syntax match GameArrow          /►/
+    syntax match GameKey            /\[\zs\k\ze\]/
+    syntax match GameLabel          /\(► \[.\].*\)/ contains=GameKey,GameArrow
+    syntax match GameQuote          /\~.*\~/
+    syntax match GameFormulaBar     /─\+/
+    syntax match GameFormula        /\v(c³ kᵦ A|Sᵦₕ\s*\=\s*─+|4 G ℏ)/ contains=GameFormulaBar
+    syntax match GameVersion        /VIM - Vi IMproved 9\.2/
+
+    syntax match AnimPeak           /■/ contained
+    syntax match AnimMid            /◼/ contained
+    syntax match AnimLow            /▪/ contained
+    syntax match AnimBar            /^\s*\%([■◼▪]\s*\)\+$/ contains=AnimPeak,AnimMid,AnimLow
+
+    syntax match TeleIcons          /[⌬⌖·]/ contained
+    syntax match TeleLab            /KAL-LAB-007\|CORE\.007/ contained
+    syntax match TeleAuthor         /@God311_/ contained
+    syntax match GameTelemetry      /.*KAL-LAB-007.*/ contains=TeleIcons,TeleLab,TeleAuthor,TeleBase
+
+    if has('timers')
+        anim_timer = timer_start(120, UpdateLoader, {repeat: -1})
+    endif
+
+    nnoremap <buffer><silent><nowait> e :enew<CR>
+    nnoremap <buffer><silent><nowait> r :browse oldfiles<CR>
+    nnoremap <buffer><silent><nowait> o :NERDTreeFocus<CR>
+    nnoremap <buffer><silent><nowait> q :quit<CR>
+
+    nnoremap <buffer><silent> i <Nop>
+    nnoremap <buffer><silent> a <Nop>
+enddef
+
+# 6. Commands & Global Keymaps
+command! StartScreen CustomStartScreen(true)
+
+nnoremap <silent> <leader>s :StartScreen<CR>
+nnoremap <silent> <F2>       :StartScreen<CR>
+
+augroup GameStartScreen
+    autocmd!
+    autocmd VimEnter * CustomStartScreen()
+    autocmd BufLeave,BufHidden,BufWipeout * StopAnimation()
+augroup END
+
+
+# -------------------------------------------------------------------------
+# 12. Python LSP, Inlay Hints & Error Lens
+# -------------------------------------------------------------------------
+def SetupLsp(): void
+    # --- Error Lens, Inlay Hints & Modern Completion Menu Icons ---
+    g:LspOptionsSet({
+        showDiagWithVirtualText: true,
+        diagVirtualTextAlign: 'after',
+        highlightDiagInline: true,
+        showDiagWithSign: true,
+        showInlayHints: true,
+        diagSignErrorText: '✘',
+        diagSignWarningText: '▲',
+        diagSignInfoText: 'ℹ',
+        diagSignHintText: '➤',
+        autoHighlightDiags: true,
+        autoPopulateDiags: true,
+        echoUnderCursor: false,
+
+        # Modern VS Code / Nerd Font Autocomplete Icons
+        customCompletionKinds: true,
+        completionKinds: {
+            'Class':         '󰠱 Class',
+            'Color':         '󰏘 Color',
+            'Constant':      '󰏿 Constant',
+            'Constructor':   ' Constructor',
+            'Enum':          ' Enum',
+            'EnumMember':    ' EnumMember',
+            'Event':         ' Event',
+            'Field':         '󰜢 Field',
+            'File':          '󰈙 File',
+            'Folder':        '󰉋 Folder',
+            'Function':      '󰊕 Function',
+            'Interface':     ' Interface',
+            'Keyword':       '󰌋 Keyword',
+            'Method':        '󰊕 Method',
+            'Module':        ' Module',
+            'Operator':      '󰆕 Operator',
+            'Property':      '󰜢 Property',
+            'Reference':     '󰈇 Reference',
+            'Snippet':       ' Snippet',
+            'Struct':        '󰆧 Struct',
+            'Text':          '󰉿 Text',
+            'TypeParameter': '󰅲 TypeParam',
+            'Unit':          '󰑭 Unit',
+            'Value':         '󰎠 Value',
+            'Variable':      '󰅩 Variable'
+        }
+    })
+
+    # =========================================================================
+    # HOW TO ADD NEW LANGUAGE SERVERS (LSP):
+    #
+    # 1. Install the language server binary onto your system / PATH.
+    # 2. Add a new dictionary to the list below following this format:
+    #
+    #    {
+    #        name: 'unique_server_name',
+    #        filetype: ['vim_filetype_1', 'vim_filetype_2'],
+    #        path: 'executable_binary_name',
+    #        args: ['--stdio']   # (Check the tool's docs; most use ['--stdio'])
+    #    },
+    # =========================================================================
+
+    # ---------------------------------------------------------------------
+    # QUICK-ADD EXAMPLES (Uncomment when installed):
+    # ---------------------------------------------------------------------
+
+    # # --- Zig (zls) | Install: brew/pacman/zig build ---
+    # {
+    #     name: 'zls',
+    #     filetype: ['zig'],
+    #     path: 'zls',
+    #     args: []
+    # },
+
+    # # --- Rust (rust-analyzer) | Install: rustup component add rust-analyzer ---
+    # {
+    #     name: 'rust-analyzer',
+    #     filetype: ['rust'],
+    #     path: 'rust-analyzer',
+    #     args: []
+    # },
+
+    # # --- Go (gopls) | Install: go install golang.org/x/tools/gopls@latest ---
+    # {
+    #     name: 'gopls',
+    #     filetype: ['go'],
+    #     path: 'gopls',
+    #     args: []
+    # },
+
+    # # --- TypeScript / JavaScript | Install: npm i -g typescript-language-server typescript ---
+    # {
+    #     name: 'typescript',
+    #     filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'],
+    #     path: 'typescript-language-server',
+    #     args: ['--stdio']
+    # },
+
+    # # --- Bash / Shell | Install: npm i -g bash-language-server ---
+    # {
+    #     name: 'bash',
+    #     filetype: ['sh', 'bash'],
+    #     path: 'bash-language-server',
+    #     args: ['start']
+    # },
+
+    # # --- HTML / CSS / JSON | Install: npm i -g vscode-langservers-extracted ---
+    # {
+    #     name: 'html',
+    #     filetype: ['html'],
+    #     path: 'vscode-html-language-server',
+    #     args: ['--stdio']
+    # }
+
+    # --- Register Language Servers ---
+    g:LspAddServer([
+        # 1. Python (basedpyright)
+        {
+            name: 'basedpyright',
+            filetype: ['python'],
+            path: 'basedpyright-langserver',
+            args: ['--stdio'],
+            workspaceConfig: {
+                basedpyright: {
+                    analysis: {
+                        typeCheckingMode: 'standard',
+                        inlayHints: {
+                            variableTypes: true,
+                            callArgumentNames: false,
+                            functionReturnTypes: true,
+                            genericTypes: false
+                        }
+                    }
+                }
+            }
+        },
+        # 2. C / C++ (clangd)
+        {
+            name: 'clangd',
+            filetype: ['c', 'cpp', 'objc', 'objcpp'],
+            path: 'clangd',
+            args: [
+                '--background-index',
+                '--clang-tidy',
+                '--completion-style=detailed',
+                '--header-insertion=iwyu'
+            ]
+        },
+
+        # 3. Rust (rust-analyzer)
+        {
+          name: 'rust-analyzer',
+          filetype: ['rust'],
+          path: 'rust-analyzer',
+          args: []
+        },
+
+        # 4. Odin (ols)
+        {
+            name: 'ols',
+            filetype: ['odin'],
+            path: '/home/sbala/tools/compilers/odin/dist/ols/ols',
+            args: [],
+            initializationOptions: {
+                enable_hover: true,
+                enable_document_symbols: true,
+                enable_inlay_hints: true,
+                enable_inlay_hints_params: true,
+                enable_inlay_hints_implicit_return: true,
+                enable_semantic_tokens: false,
+                collections: [
+                    { name: 'core',   path: '/home/sbala/tools/compilers/odin/Odin/build/core' },
+                    { name: 'vendor', path: '/home/sbala/tools/compilers/odin/Odin/build/vendor' },
+                    { name: 'base',   path: '/home/sbala/tools/compilers/odin/Odin/build/base' },
+                    { name: 'shared', path: '/home/sbala/tools/compilers/odin/Odin/build/shared' }
+                ]
+            }
+        },
+
+        # 5. Lean 4 (Lake-aware configuration)
+        {
+            name: 'lean',
+            filetype: ['lean'],
+            path: '/home/sbala/tools/compilers/lean/bin/lake',
+            args: ['serve'],
+            rootSearch: ['lakefile.toml', 'lakefile.lean', 'lean-toolchain']
+        }
+
+    ])
+
+    # --- Inlay Hints Styling (Subtle Doom One Muted Text) ---
+    hi LspInlayHintsType   guifg=#9ca0a4 guibg=#21242b gui=italic ctermfg=247 ctermbg=235 cterm=italic
+    hi LspInlayHintsParam  guifg=#9ca0a4 guibg=#21242b gui=italic ctermfg=247 ctermbg=235 cterm=italic
+
+
+    # --- Clean Doom One Error Lens Highlights ---
+    hi LspDiagVirtualTextError   guifg=#ff6c6b guibg=#21242b gui=italic ctermfg=203 ctermbg=235 cterm=italic
+    hi LspDiagVirtualTextWarning guifg=#ECBE7B guibg=#21242b gui=italic ctermfg=222 ctermbg=235 cterm=italic
+    hi LspDiagVirtualTextInfo    guifg=#51afef guibg=#21242b gui=italic ctermfg=75  ctermbg=235 cterm=italic
+    hi LspDiagVirtualTextHint    guifg=#98be65 guibg=#21242b gui=italic ctermfg=114 ctermbg=235 cterm=italic
+
+    # --- Modern Doom One Popup Menu (Pmenu) Styling ---
+    hi Pmenu         guifg=#bbc2cf guibg=#21242b gui=NONE     ctermfg=251 ctermbg=235
+    hi PmenuSel      guifg=#1b2229 guibg=#51afef gui=bold     ctermfg=234 ctermbg=75 cterm=bold
+    hi PmenuKind     guifg=#ECBE7B guibg=#21242b gui=italic   ctermfg=222 ctermbg=235
+    hi PmenuKindSel  guifg=#1b2229 guibg=#51afef gui=bold     ctermfg=234 ctermbg=75 cterm=bold
+    hi PmenuExtra    guifg=#5B6268 guibg=#21242b gui=italic   ctermfg=241 ctermbg=235
+    hi PmenuExtraSel guifg=#1b2229 guibg=#51afef gui=NONE     ctermfg=234 ctermbg=75
+    hi PmenuSbar     guifg=NONE    guibg=#1e2227 gui=NONE     ctermbg=234
+    hi PmenuThumb    guifg=NONE    guibg=#51afef gui=NONE     ctermbg=75
+
+    # Optimal completion popup behavior
+    set completeopt=menu,menuone,noinsert,noselect
+    set pumheight=15
+
+    # Signs in the gutter
+    hi LspDiagSignErrorText      guifg=#ff6c6b guibg=NONE gui=bold ctermfg=203 ctermbg=NONE cterm=bold
+    hi LspDiagSignWarningText    guifg=#ECBE7B guibg=NONE gui=bold ctermfg=222 ctermbg=NONE cterm=bold
+    hi LspDiagSignInfoText       guifg=#51afef guibg=NONE gui=bold ctermfg=75  ctermbg=NONE cterm=bold
+    hi LspDiagSignHintText       guifg=#98be65 guibg=NONE gui=bold ctermfg=114 ctermbg=NONE cterm=bold
+
+    # Undercurls on actual error tokens
+    hi LspDiagInlineError        guifg=NONE guibg=NONE gui=undercurl guisp=#ff6c6b cterm=undercurl
+    hi LspDiagInlineWarning      guifg=NONE guibg=NONE gui=undercurl guisp=#ECBE7B cterm=undercurl
+    hi LspDiagInlineInfo         guifg=NONE guibg=NONE gui=undercurl guisp=#51afef cterm=undercurl
+    hi LspDiagInlineHint         guifg=NONE guibg=NONE gui=undercurl guisp=#98be65 cterm=undercurl
+enddef
+
+
+augroup PythonLSP
+    autocmd!
+    autocmd User LspSetup SetupLsp()
+augroup END
+
+# --- Keymaps ---
+nnoremap <silent> gd         <Cmd>LspGotoDefinition<CR>
+nnoremap <silent> K          <Cmd>LspHover<CR>
+nnoremap <silent> <leader>rn <Cmd>LspRename<CR>
+nnoremap <silent> [d         <Cmd>LspDiagPrev<CR>
+nnoremap <silent> ]d         <Cmd>LspDiagNext<CR>
+nnoremap <silent> <leader>d  <Cmd>LspDiagCurrent<CR>
+# inline docs lsp
+set mouse=a
+nnoremap <silent> <2-LeftMouse> <Cmd>LspHover<CR>
+
+
+# -------------------------------------------------------------------------
+# 13. Fuzzy Finder (Telescope Alternative for Vim 9)
+# -------------------------------------------------------------------------
+# Telescope-style Key Mappings (Leader is comma)
+nnoremap <silent> <leader>ff <Cmd>FuzzyFiles<CR>
+nnoremap <silent> <leader>fg <Cmd>FuzzyGrep<CR>
+nnoremap <silent> <leader>fb <Cmd>FuzzyBuffers<CR>
+nnoremap <silent> <leader>fr <Cmd>FuzzyMRU<CR>
+
+# Window styling to match Doom One
+g:fuzzyy_window_layout = {
+    preview: 1,           # Enable live file preview pane on the right
+    preview_ratio: 0.55   # 55% preview, 45% file list
+}

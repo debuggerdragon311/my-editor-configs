@@ -1,0 +1,20 @@
+// A File Icon Preferences – User
+// ================================================================
+{
+   // Gives all icons the soft Everforest grey/green tone instead of cartoon colors
+    "color": "#859289",
+
+    // Gently lights up on mouse hover (Everforest Green)
+    "color_on_hover": "#a7c080",
+
+    // Turns crisp white/cream when a file is actively selected
+    "color_on_select": "#d3c6aa",
+
+    // Balanced opacity so file names stand out first, icons second
+    "opacity": 0.75,
+    "opacity_on_hover": 0.95,
+    "opacity_on_select": 1.0,
+
+    // Size 9 or 10 gives icons sharp, proportional geometry without blurring
+    "size": 9
+}

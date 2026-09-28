@@ -1,0 +1,284 @@
+/*
+ * ============================================================================
+ * File:        Everforest.sublime-color-scheme
+ * Name:        Everforest Dark (Soumyajit Bala Edition)
+ * Author:      Soumyajit Bala <soumyajitbala@users.noreply.github.com>
+ * Copyright:   (c) 2026 Soumyajit Bala. All rights reserved.
+ * Version:     0.1.0
+ * Updated:     September 27, 2026
+ *
+ * Attribution Notice:
+ *   Color palette derivations and baseline scope maps adapted from:
+ *   "Everforest" by sainnhe <i@sainnhe.dev> (MIT License).
+ *   Original Copyright (c) 2019-2026 sainnhe.
+ *
+ * ----------------------------------------------------------------------------
+ * LICENSE NOTICE:
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * ============================================================================
+ */
+{
+  "name": "Everforest Dark",
+  "author": "Soumyajit Bala (based on sainnhe/everforest)",
+
+  "variables": {
+    // ------------------------------------------------------------------------
+    // Everforest Canonical Color Palette
+    // ------------------------------------------------------------------------
+    // Background Tones:
+    //  - Dark Medium (Default): #2d353b
+    //  - Dark Hard:            #272e33
+    //  - Dark Soft:            #323c41
+    "bg0": "#2d353b",
+    "bg1": "#333c43",
+    "bg2": "#3a454a",
+    "bg3": "#445055",
+    "bg4": "#4c555b",
+    "bg5": "#53605c",
+    "bg_dim": "#232a2e",
+
+    // Foreground & Base Contrast
+    "fg": "#d3c6aa",
+
+    // Chromatic Accent Spectrum
+    "red": "#e67e80",
+    "orange": "#e69875",
+    "yellow": "#dbbc7f",
+    "green": "#a7c080",
+    "aqua": "#83c092",
+    "blue": "#7fbbb3",
+    "purple": "#d699b6",
+
+    // Monochromatic & Neutral Scales
+    "grey0": "#7a8478",
+    "grey1": "#859289",
+    "grey2": "#9da9a0",
+
+    // Contextual & Diff Backdrops
+    "bg_red": "#4c3a40",
+    "bg_green": "#3f4d44",
+    "bg_blue": "#354d52",
+    "bg_visual": "#543a48"
+  },
+
+  "globals": {
+    "background": "var(bg0)",
+    "foreground": "var(fg)",
+    "caret": "var(fg)",
+    "block_caret": "var(fg)",
+    "line_highlight": "var(bg1)",
+    "selection": "var(bg_visual)",
+    "selection_border": "var(bg_visual)",
+    "misspelling": "var(red)",
+    "shadow": "color(var(bg_dim) alpha(0.5))",
+
+    // Gutters, Margins, and Line Numbers
+    "gutter": "var(bg0)",
+    "gutter_foreground": "var(grey0)",
+    "line_diff_added": "var(green)",
+    "line_diff_modified": "var(blue)",
+    "line_diff_deleted": "var(red)",
+
+    // Rulers and Visual Guides
+    "rulers": "var(bg2)",
+    "guide": "var(bg2)",
+    "active_guide": "var(bg4)",
+    "stack_guide": "var(bg3)",
+
+    // Bracket Pairing and Match Highlighting
+    "brackets_options": "underline",
+    "bracket_contents_options": "underline",
+    "highlight": "var(yellow)",
+    "find_highlight": "var(bg_green)",
+    "find_highlight_foreground": "var(fg)"
+  },
+
+  "rules": [
+    // Comments
+    {
+      "name": "Comments",
+      "scope": "comment, punctuation.definition.comment",
+      "foreground": "var(grey1)",
+      "font_style": "italic"
+    },
+
+    // Keywords, Statements, and Flow Control (Red)
+    {
+      "name": "Keywords & Control Flow",
+      "scope": "keyword, keyword.control, keyword.operator.word, storage.modifier",
+      "foreground": "var(red)"
+    },
+
+    // Functions and Methods (Green)
+    {
+      "name": "Functions & Methods",
+      "scope": "entity.name.function, support.function, variable.function",
+      "foreground": "var(green)"
+    },
+
+    // Types, Interfaces, Classes, and Structs (Yellow)
+    {
+      "name": "Types & Classes",
+      "scope": "entity.name.type, entity.name.class, entity.name.struct, entity.other.inherited-class, support.type, support.class",
+      "foreground": "var(yellow)"
+    },
+
+    // Storage Types and Qualifiers (Orange)
+    {
+      "name": "Storage Types",
+      "scope": "storage.type",
+      "foreground": "var(orange)"
+    },
+
+    // Operators and Structural Separators (Orange)
+    {
+      "name": "Operators & Delimiters",
+      "scope": "keyword.operator, punctuation.separator.key-value",
+      "foreground": "var(orange)"
+    },
+
+    // Literals: Strings and Quotes (Green)
+    {
+      "name": "Strings",
+      "scope": "string.quoted, string.template",
+      "foreground": "var(green)"
+    },
+
+    // Regex and Escape Sequences (Aqua)
+    {
+      "name": "Escapes & RegEx",
+      "scope": "constant.character.escape, string.regexp",
+      "foreground": "var(aqua)"
+    },
+
+    // Numerics and Booleans (Purple)
+    {
+      "name": "Numbers & Booleans",
+      "scope": "constant.numeric, constant.language.boolean",
+      "foreground": "var(purple)"
+    },
+
+    // System/Language Constants (Aqua)
+    {
+      "name": "Constants",
+      "scope": "constant.language, constant.other, support.constant",
+      "foreground": "var(aqua)"
+    },
+
+    // Variables and Identifiers (Foreground Base)
+    {
+      "name": "Variables",
+      "scope": "variable, variable.other.readwrite",
+      "foreground": "var(fg)"
+    },
+
+    // Parameters and Special Language Identifiers (Blue)
+    {
+      "name": "Parameters & Special Identifiers",
+      "scope": "variable.parameter, variable.language",
+      "foreground": "var(blue)"
+    },
+
+    // Preprocessor Directives, Imports, and Annotations (Purple)
+    {
+      "name": "Preprocessor, Macros & Imports",
+      "scope": "meta.preprocessor, keyword.control.import, entity.name.function.preprocessor, variable.annotation",
+      "foreground": "var(purple)"
+    },
+
+    // Markup: Tags (Orange)
+    {
+      "name": "Markup Tags",
+      "scope": "entity.name.tag",
+      "foreground": "var(orange)"
+    },
+
+    // Markup: Attributes (Aqua)
+    {
+      "name": "Tag Attributes",
+      "scope": "entity.other.attribute-name",
+      "foreground": "var(aqua)"
+    },
+
+    // Markup: Tag Delimiters (Green)
+    {
+      "name": "Tag Delimiters",
+      "scope": "punctuation.definition.tag",
+      "foreground": "var(green)"
+    },
+
+    // Data Formats: JSON / YAML Keys (Green)
+    {
+      "name": "Data Keys",
+      "scope": "meta.mapping.key string, entity.name.label",
+      "foreground": "var(green)"
+    },
+
+    // Markdown Heading 1 (Red Bold)
+    {
+      "name": "Markdown Heading 1",
+      "scope": "markup.heading.1",
+      "foreground": "var(red)",
+      "font_style": "bold"
+    },
+
+    // Markdown Heading 2 (Orange Bold)
+    {
+      "name": "Markdown Heading 2",
+      "scope": "markup.heading.2",
+      "foreground": "var(orange)",
+      "font_style": "bold"
+    },
+
+    // Markdown Heading 3 (Yellow Bold)
+    {
+      "name": "Markdown Heading 3",
+      "scope": "markup.heading.3",
+      "foreground": "var(yellow)",
+      "font_style": "bold"
+    },
+
+    // Markdown Code Spans (Green)
+    {
+      "name": "Markdown Code",
+      "scope": "markup.raw.inline, markup.raw.block",
+      "foreground": "var(green)"
+    },
+
+    // Version Control: Inserted / Added
+    {
+      "name": "VCS Diff Added",
+      "scope": "markup.inserted",
+      "foreground": "var(green)",
+      "background": "var(bg_green)"
+    },
+
+    // Version Control: Modified / Changed
+    {
+      "name": "VCS Diff Modified",
+      "scope": "markup.changed",
+      "foreground": "var(blue)",
+      "background": "var(bg_blue)"
+    },
+
+    // Version Control: Deleted / Removed
+    {
+      "name": "VCS Diff Deleted",
+      "scope": "markup.deleted",
+      "foreground": "var(red)",
+      "background": "var(bg_red)"
+    }
+  ]
+}

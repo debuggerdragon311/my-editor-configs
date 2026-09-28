@@ -1,0 +1,81 @@
+{
+    // ==========================================
+    // THEME & COLOR SCHEME
+    // ==========================================
+    "color_scheme": "Everforest.sublime-color-scheme",
+    "theme": "Adaptive.sublime-theme",
+    "hardware_acceleration": "opengl",
+    "file_tab_style": "angled",
+    "highlight_line": true,
+    "highlight_gutter": true,
+    "highlight_line_number": true,
+    "inactive_sheet_dimming": true,
+
+    // ==========================================
+    // TYPOGRAPHY & SPACING (LONG CODING SESSIONS)
+    // ==========================================
+    "font_face": "JetBrainsMono Nerd Font",
+    "font_size": 14,
+    "font_options": [
+        "subpixel_antialias"
+    ],
+    "line_padding_top": 4,
+    "line_padding_bottom": 4,
+    "caret_style": "phase",
+
+    // ==========================================
+    // VIM MODE (NEOVINTAGEOUS)
+    // ==========================================
+    // Keeping Vintage ignored prevents conflict with NeoVintageous
+    "ignored_packages": [
+        "Vintage"
+    ],
+    "relative_line_numbers": true,
+
+    // ==========================================
+    // CODE HYGIENE & INDENTATION
+    // ==========================================
+    "rulers": [80, 100],
+    "tab_size": 4,
+    "translate_tabs_to_spaces": true,
+    "scroll_past_end": true,
+    "scroll_speed": 1.0,
+    "trim_trailing_white_space_on_save": "not_on_caret",
+    "ensure_newline_at_eof_on_save": true,
+    "draw_white_space": ["selection", "trailing"],
+
+    // Bracket & Tag matching
+    "match_brackets": true,
+    "match_brackets_content": true,
+    "match_tags": true,
+
+    // ==========================================
+    // SIDEBAR CLEANUP (REMOVES UGLY DOTS)
+    // ==========================================
+    "show_git_status": false,
+
+    // ==========================================
+    // STATUS BAR (CLEAN & COMPACT)
+    // ==========================================
+    "show_sidebar_button": true,
+    "show_line_column": "off",
+    "show_git_status_in_status_bar": true,
+    "show_encoding": false,
+    "show_line_endings": false,
+    "show_indentation": false,
+    "show_syntax": true,
+    "fade_fold_buttons": true,
+
+    // Indexing for deep codebases
+    "index_files": true,
+    "close_find_after_find_all": true,
+    "close_find_after_replace_all": true,
+    "neovintageous_build_version": 13200,
+
+    // Hides the full directory path in the top window bar
+    "show_full_path": false,
+    "show_rel_path": false,
+    // Hides File, Edit, Selection...
+    // Tap the 'Alt' key anytime to reveal it momentarily
+    "auto_hide_menu": true
+}

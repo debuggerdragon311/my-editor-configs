@@ -1,0 +1,47 @@
+[
+    // =========================================================================
+    // SIDEBAR: VS CODE STYLE ROW HEIGHT & SPACING
+    // =========================================================================
+    {
+        "class": "sidebar_tree",
+        "row_padding": [12, 6],
+        "indent": 16,
+        "indent_offset": 0
+    },
+
+    // Sidebar File & Folder Labels
+    {
+        "class": "sidebar_label",
+        "font.face": "JetBrainsMono Nerd Font",
+        "font.size": 13,
+        // Everforest soft text color
+        "color": [211, 198, 170]
+    },
+
+    // Sidebar Top Heading ("FOLDERS")
+    {
+        "class": "sidebar_heading",
+        "color": [133, 146, 137],
+        "font.bold": true,
+        "font.size": 11
+    },
+
+    // =========================================================================
+    // STATUS BAR: CLEAN HEIGHT & EVERFOREST COLORS
+    // =========================================================================
+    {
+        "class": "status_bar",
+        "content_margin": [12, 6, 12, 6],
+        // Everforest background (#2d353b)
+        "layer0.tint": [45, 53, 59]
+    },
+
+    // Status bar text labels
+    {
+        "class": "label_control",
+        "parents": [{"class": "status_bar"}],
+        "font.face": "JetBrainsMono Nerd Font",
+        "font.size": 11,
+        "color": [211, 198, 170]
+    }
+]
